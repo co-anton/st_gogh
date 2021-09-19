@@ -4,6 +4,14 @@
 
 Themes from https://mayccoll.github.io/Gogh/ for st (https://st.suckless.org/)
 
+## Dependencies
+
+- curl
+- jq
+- python
+
+st must be installed (`find $HOME -path '**/st/config.h'` is used to find it)
+
 ## Usage
 
 ```sh
@@ -17,3 +25,14 @@ chmod +x replace.py st_gogh
 
 ## Example with Elio theme
 ![Alt text](example_elio.png)
+
+## Remarks on what it does
+
+- Themes are stored locally in `$HOME/.config/terminal_colours/colours.json`
+- Relies on /tmp/ for intermediary files 
+- A backup of config.h is created but it's always good to make another copy just in case :) 
+
+## Improvement
+
+The replace bit could probably be done without relying on python or using temp files
+
