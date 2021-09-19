@@ -34,5 +34,5 @@ chmod +x replace.py st_gogh
 
 ## Improvement
 
-[] Use shell scripting for the replace part as well rather than python
-[] Make it POSIX compliant, currently uses `zsh` 
+- [ ] Use shell scripting for the replace part as well rather than python
+- [ ] Make it POSIX compliant, currently uses `zsh` 
