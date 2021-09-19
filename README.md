@@ -15,4 +15,5 @@ chmod +x replace.py change_term_colours.sh
 # Recompile st and enjoy! 
 ```
 
-
+## Example with Elio theme
+![Alt text](example_elio.png)
