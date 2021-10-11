@@ -20,7 +20,7 @@ print_names() {
   done
 }
 
-choose_names() {
+choose_name() {
   tmptheme="/tmp/colourtheme"
   colours=`check_download_themes`
   print_names $colours | less
@@ -30,6 +30,7 @@ choose_names() {
   theme=`cat $colours | jq ".themes[$choice]"`
   name=`echo $theme | jq ".name "`
   echo "Setting theme: $name"
+  echo $theme
 
   # Writing values to temp file
   colours=(black red green yellow blue purple cyan white brightBlack brightRed brightGreen brightYellow brightBlue brightPurple brightCyan brightWhite)
@@ -48,11 +49,21 @@ choose_names() {
   echo "};" >> $tmptheme
 }
 
-find_config() { find $HOME -path '**/st/config.h'  }
+find_config_all() { find $HOME -path '**/st/config.h' }
+
+find_config_one() { find_config_all | head -n 1 }
 
 find_code_replace() {
-  config=`find_config`
-  echo "Updating $config"
+  config=`find_config_one`
+  while true; do
+    echo "Update $config [yes/no]" 
+    read yn
+    case $yn in
+      [Yy]*) break;;
+      [Nn]*) echo "enter path - hint: `find_config_all`" && read config;;
+      *) ;;
+    esac
+  done
   cp "$config" "$config.bkp" # backup
   
   # Replace colourname
@@ -66,5 +77,8 @@ find_code_replace() {
   sed -i 's/defaultbg = .*/defaultbg = 259;/' $config
 }
 
+main() {
+  choose_name && find_code_replace && echo "Recompile st and test new theme! To reverse changes do \"mv \"$config.bkp\" $config"
+}
 
-choose_names && find_code_replace && echo "Recompile st and test new theme! To reverse changes do \"mv \"$config.bkp\" $config"
+main
