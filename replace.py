@@ -1,10 +1,20 @@
 #!/usr/bin/python3
 
+import os
+import sys
+
+def safe_read(path:str) -> str:
+    try:
+        with open(path, 'r') as f: return f.read()
+    except PermissionError:
+        sys.exit(f'{path} raises a permission error')
+
 def main(path_search: str, path_replace: str, path_file: str) -> None:
-    with open(path_file, 'r') as f: file = f.read()
-    with open(path_search, 'r') as f: search = f.read()
-    with open(path_replace, 'r') as f: replace = f.read()
+    file = safe_read(path_file)
+    search = safe_read(path_search)
+    replace = safe_read(path_replace)
     new_file = file.replace(search, replace)
+    assert os.access(path_file, os.W_OK), f"Cannot write {path_file}"
     with open(path_file, 'w') as f: f.write(new_file)
 
 if __name__ == '__main__':
