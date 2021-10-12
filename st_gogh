@@ -4,7 +4,7 @@ check_download_themes() {
   themes=$HOME/.config/terminal_colours
   [[ ! -d $themes ]] && mkdir -p $themes
   url=https://raw.githubusercontent.com/Mayccoll/Gogh/master/data/themes.json
-  if [[ ! -f $themes ]]; then
+  if [[ ! -f $themes/colours.json ]]; then
     curl -s $url > $themes/colours.json
   fi
   echo "$themes/colours.json"
