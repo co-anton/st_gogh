@@ -18,7 +18,6 @@ def main(path_search: str, path_replace: str, path_file: str) -> None:
     with open(path_file, 'w') as f: f.write(new_file)
 
 if __name__ == '__main__':
-    import sys
     assert len(sys.argv) == 4
     path_search = sys.argv[1]
     path_replace = sys.argv[2]
