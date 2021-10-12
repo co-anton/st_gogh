@@ -20,12 +20,20 @@ print_names() {
   done
 }
 
-choose_name() {
+set_theme() {
   tmptheme="/tmp/colourtheme"
   colours=`check_download_themes`
-  print_names $colours | less
-  echo "Choose theme number: "
-  read choice
+  name_query="$1"
+  if [ -z "${name_query}" ]; then
+    print_names $colours | less
+    echo "Choose theme number: "
+    read choice
+  else
+    choice=`./find_name.py ${name_query} $colours`
+    if [ $choice = "-1" ]; then
+      echo "Could not find theme $name_query" && exit 1
+    fi
+  fi
   choice=$((choice-1))
   theme=`cat $colours | jq ".themes[$choice]"`
   name=`echo $theme | jq ".name "`
@@ -76,7 +84,7 @@ find_code_replace() {
 }
 
 main() {
-  choose_name && find_code_replace && echo "Recompile st and test new theme!\nTo reverse changes do\n  mv \"$config.bkp\" $config"
+  set_theme $1 && find_code_replace && echo "Recompile st and test new theme!\nTo reverse changes do\n  mv \"$config.bkp\" $config"
 }
 
-main
+main $1
