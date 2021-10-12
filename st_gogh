@@ -1,5 +1,7 @@
 #!/usr/bin/zsh
 
+SDIR="$(dirname `readlink -f "$0"`)"
+
 check_download_themes() {
   # Download colour scheme if not found locally
   themes=$HOME/.config/terminal_colours
@@ -35,7 +37,7 @@ set_theme() {
     echo "Choose theme number: "
     read choice
   else
-    choice=`./find_name.py ${name_query} $colours`
+    choice=`$SDIR/find_name.py ${name_query} $colours`
     if [ $choice = "-1" ]; then
       echo "Could not find theme $name_query" && exit 1
     fi
@@ -86,7 +88,7 @@ find_code_replace() {
   # Replace colourname
   colourname=`pcregrep -Mo "^static const char \*colorname\[\] = (\{([^{}]++|(?1))*\};)" $config`
   echo $colourname > /tmp/oldtheme
-  ./replace.py /tmp/oldtheme /tmp/colourtheme $config || exit 1
+  $SDIR/replace.py /tmp/oldtheme /tmp/colourtheme $config || exit 1
 
   # Replace bg/fg
   sed -i 's/defaultfg = .*/defaultfg = 258;/' $config
