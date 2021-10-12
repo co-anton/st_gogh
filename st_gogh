@@ -1,6 +1,7 @@
 #!/usr/bin/zsh
 
 check_download_themes() {
+  # Download colour scheme if not found locally
   themes=$HOME/.config/terminal_colours
   [[ ! -d $themes ]] && mkdir -p $themes
   url=https://raw.githubusercontent.com/Mayccoll/Gogh/master/data/themes.json
@@ -10,8 +11,8 @@ check_download_themes() {
   echo "$themes/colours.json"
 }
 
-
 print_names() {
+  # Print themes' names
   colours="$1"
   i="1"
   for theme in `cat $colours | jq ".themes[].name"`; do
@@ -21,8 +22,13 @@ print_names() {
 }
 
 set_theme() {
+  # Create temp file with colour theme (if name not provided
+  # via $1, interactively asks user)
+
   tmptheme="/tmp/colourtheme"
   colours=`check_download_themes`
+
+  # Get name via $1 or ask user 
   name_query="$1"
   if [ -z "${name_query}" ]; then
     print_names $colours | less
@@ -34,12 +40,13 @@ set_theme() {
       echo "Could not find theme $name_query" && exit 1
     fi
   fi
+
   choice=$((choice-1))
   theme=`cat $colours | jq ".themes[$choice]"`
   name=`echo $theme | jq ".name "`
   echo "Setting theme: $name"
 
-  # Writing values to temp file
+  # Write values to temp file
   colours=(black red green yellow blue purple cyan white brightBlack brightRed brightGreen brightYellow brightBlue brightPurple brightCyan brightWhite)
   echo "static const char *colorname[] = {" > $tmptheme
   echo "  /* Theme - $name */" >> $tmptheme
@@ -61,6 +68,9 @@ find_config_all() { find $HOME -path '**/st/config.h' }
 find_config_one() { find_config_all | head -n 1 }
 
 find_code_replace() {
+  # Overwrite colour selection in config.h with temp file created by
+  # set_theme
+
   config=`find_config_one`
   while true; do
     echo -n "Update $config?[yes/no] " 
@@ -76,7 +86,7 @@ find_code_replace() {
   # Replace colourname
   colourname=`pcregrep -Mo "^static const char \*colorname\[\] = (\{([^{}]++|(?1))*\};)" $config`
   echo $colourname > /tmp/oldtheme
-  ./replace.py /tmp/oldtheme /tmp/colourtheme $config
+  ./replace.py /tmp/oldtheme /tmp/colourtheme $config || exit 1
 
   # Replace bg/fg
   sed -i 's/defaultfg = .*/defaultfg = 258;/' $config

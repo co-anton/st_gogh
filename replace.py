@@ -10,6 +10,8 @@ def safe_read(path:str) -> str:
         sys.exit(f'{path} raises a permission error')
 
 def main(path_search: str, path_replace: str, path_file: str) -> None:
+    # Searches content of file path_search in file path_file and 
+    # replaces it with content of path_replace
     file = safe_read(path_file)
     search = safe_read(path_search)
     replace = safe_read(path_replace)
